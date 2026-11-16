@@ -1,15 +1,6 @@
 """HTML for each page, kept as Python strings so the whole app is Python files."""
 
-BEE = """
-<svg class="bee" viewBox="0 0 64 64" aria-hidden="true">
-  <ellipse cx="22" cy="20" rx="13" ry="9" transform="rotate(-25 22 20)" fill="#DDF0FB" stroke="#14324B" stroke-width="2.5"/>
-  <ellipse cx="40" cy="18" rx="13" ry="9" transform="rotate(25 40 18)" fill="#DDF0FB" stroke="#14324B" stroke-width="2.5"/>
-  <ellipse cx="32" cy="38" rx="15" ry="19" fill="#F4B63F" stroke="#14324B" stroke-width="2.5"/>
-  <path d="M18.5 33h27M17.5 42h29M21 50.5h22" stroke="#14324B" stroke-width="5" stroke-linecap="round"/>
-  <path d="M32 57v5" stroke="#14324B" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M27 21c-3-5-7-7-10-7M37 21c3-5 7-7 10-7" fill="none" stroke="#14324B" stroke-width="2.5" stroke-linecap="round"/>
-</svg>
-"""
+from bee import BEE_CSS, bee_svg
 
 LAYOUT = """<!doctype html>
 <html lang="en"><head>
@@ -22,18 +13,18 @@ LAYOUT = """<!doctype html>
 <style>
 :root{
   --sky:#8CCBF0; --sky-deep:#3E9AD3; --ice:#EEF7FC; --white:#fff;
-  --ink:#14324B; --ink-soft:#4F6B82; --honey:#F4B63F; --red:#C8352E;
+  --ink:#14324B; --ink-soft:#4F6B82; --honey:#F4B63F; --red:#C8352E; --line:#D6EAF6;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--ice);color:var(--ink);
   font:400 1rem/1.55 Figtree,system-ui,sans-serif}
 header{background:var(--white);border-bottom:3px solid var(--sky)}
-.bar{max-width:34rem;margin:0 auto;padding:.75rem 1.25rem;display:flex;align-items:center;gap:.6rem}
-.bee{width:2.6rem;height:2.6rem}
+.bar{max-width:34rem;margin:0 auto;padding:.5rem 1.25rem;display:flex;align-items:center;gap:.5rem}
+.bee-sm{width:2.8rem;height:auto;flex:none}
 .word{font:800 1.45rem/1 "Bricolage Grotesque",sans-serif;letter-spacing:-.01em}
 .word span{color:var(--sky-deep)}
 .bar a{margin-left:auto;color:var(--ink-soft);font-size:.9rem}
-main{max-width:34rem;margin:0 auto;padding:1.75rem 1.25rem 3rem}
+main{max-width:34rem;margin:0 auto;padding:1.5rem 1.25rem 3rem}
 h1{font:800 2rem/1.1 "Bricolage Grotesque",sans-serif;margin:0 0 .4rem}
 h2{font:600 1.25rem/1.2 "Bricolage Grotesque",sans-serif;margin:2rem 0 .6rem}
 p{margin:.4rem 0 1rem;max-width:60ch}
@@ -49,14 +40,33 @@ button{font:600 1rem Figtree,sans-serif;padding:.8rem 1.2rem;border-radius:.5rem
 button.quiet{background:transparent;color:var(--ink)}
 button.link{border:0;background:none;color:var(--ink-soft);padding:0;margin:0;text-decoration:underline;font-weight:400}
 .err{background:#FBE5E3;color:var(--red);padding:.7rem .9rem;border-radius:.5rem;font-weight:600}
+.flash{background:var(--white);border:2px solid var(--sky);padding:.7rem .9rem;border-radius:.5rem}
+
+/* hero bee on the first screens */
+.hero{display:flex;justify-content:center;margin:-.5rem 0 .5rem}
+.bee-lg{width:min(8.5rem,40vw);height:auto}
+
+/* restaurant picker */
+.places{list-style:none;margin:1rem 0 0;padding:0;border-top:1px solid var(--line)}
+.places button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:1fr auto;gap:.1rem 1rem;
+  width:100%;padding:1rem .25rem;border-bottom:1px solid var(--line);cursor:pointer}
+.places button:focus-visible{outline:3px solid var(--honey);outline-offset:-3px}
+.places button:hover .pname{text-decoration:underline;text-decoration-color:var(--honey);text-decoration-thickness:3px}
+.pname{font:600 1.15rem/1.25 "Bricolage Grotesque",sans-serif}
+.pkind{color:var(--ink-soft);font-size:.92rem;grid-column:1}
+.pcount{grid-row:1/3;grid-column:2;align-self:center;color:var(--ink-soft);font-size:.9rem}
+
+.where{display:flex;gap:.6rem;align-items:baseline;flex-wrap:wrap;margin:0 0 .25rem}
+.where a{color:var(--ink-soft);font-size:.9rem}
 
 /* the honeycomb meter */
-.meter{display:grid;place-items:center;margin:.5rem 0 1rem}
+.meter{display:grid;place-items:center;margin:.5rem 0 .5rem}
 .meter svg{width:min(15rem,70vw)}
 .meter .num{font:800 46px "Bricolage Grotesque",sans-serif;fill:var(--ink)}
 .meter .unit{font:500 15px Figtree,sans-serif;fill:var(--ink-soft)}
 .fill{transition:y .8s ease,height .8s ease}
-@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+.countdown{text-align:center;color:var(--ink-soft);margin:0 auto 1.25rem}
+.countdown strong{color:var(--ink);white-space:nowrap}
 
 .note{padding:1rem 1.1rem;border-radius:.6rem;background:var(--white);border-left:6px solid var(--sky)}
 .note.over{border-color:var(--honey)}
@@ -64,23 +74,34 @@ button.link{border:0;background:none;color:var(--ink-soft);padding:0;margin:0;te
 .note strong{display:block;font-size:1.05rem}
 .note ul{margin:.4rem 0 .6rem;padding-left:1.2rem}
 .call{color:var(--red);font-weight:700}
+
+.rest{display:flex;gap:1rem;align-items:center;background:var(--white);border-radius:.6rem;
+  padding:1rem 1.1rem;margin-top:1rem;border:2px dashed var(--sky)}
+.rest p{margin:0;font-size:.95rem}
+.rest button{margin:0;flex:none;white-space:nowrap;background:var(--sky);border-color:var(--sky);color:var(--ink)}
+
 .round{list-style:none;padding:0;margin:0}
-.round li{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid #D6EAF6}
+.round li{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--line)}
 .muted{color:var(--ink-soft);font-size:.92rem}
 footer{max-width:34rem;margin:0 auto;padding:0 1.25rem 2rem;color:var(--ink-soft);font-size:.85rem}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+""" + BEE_CSS + """
 </style></head><body>
-<header><div class="bar">""" + BEE + """<div class="word">BUZZ<span>-WISE</span></div>
+<header><div class="bar">""" + bee_svg('hdr', 'bee bee-sm') + """<div class="word">BUZZ<span>-WISE</span></div>
 {% if session.get('current') %}<a href="{{ url_for('switch') }}">Switch person</a>{% endif %}
 </div></header>
 <main>
 {% if error %}<p class="err" role="alert">{{ error }}</p>{% endif %}
+{% if flash %}<p class="flash" role="status">{{ flash }}</p>{% endif %}
 __BODY__
 </main>
 <footer>BUZZ-WISE gives an estimate, not a measurement. Food, medication and metabolism all change your real BAC.
 Never use this number to decide whether you can drive.</footer>
 </body></html>"""
 
-VERIFY = """
+HERO = '<div class="hero">' + bee_svg('hero', 'bee bee-lg') + '</div>'
+
+VERIFY = HERO + """
 <h1>Check your age</h1>
 <p class="lede">Upload a photo of your ID and enter your birthday. You need to be 21 or older.
 Your photo isn't saved.</p>
@@ -109,10 +130,25 @@ The calculation needs them.</p>
 {% if names %}<p class="muted">Profiles on this phone: {{ names|join(', ') }}</p>{% endif %}
 """
 
+PLACES = """
+<h1>Where are you tonight?</h1>
+<p class="lede">Pick the place you're at to see its drink menu.</p>
+<ul class="places">
+{% for pid, p in places.items() %}
+  <li><form method="post" action="{{ url_for('choose_place', pid=pid) }}">
+    <button>
+      <span class="pname">{{ p.name }}</span>
+      <span class="pkind">{{ p.kind }}</span>
+      <span class="pcount">{{ p.menu|length }} drinks</span>
+    </button>
+  </form></li>
+{% endfor %}
+</ul>
+"""
+
 METER = """
-<h1>Hi, {{ name|title }}</h1>
-<p class="lede">{% if last %}Your BAC drops about 0.015 every hour. Refresh to see it fall.
-{% else %}Add the drinks you've had so far, then calculate.{% endif %}</p>
+<div class="where"><h1>Hi, {{ name|title }}</h1></div>
+<p class="where muted">At {{ place.name }} <a href="{{ url_for('change_place') }}">Change place</a></p>
 
 <div class="meter">
 <svg viewBox="0 0 200 230" role="img" aria-label="Estimated BAC {{ '%.3f'|format(bac) }}">
@@ -125,6 +161,13 @@ METER = """
   <text class="unit" x="100" y="150" text-anchor="middle">estimated BAC</text>
 </svg>
 </div>
+{% if state == 'danger' %}
+{% elif bac > 0 %}
+<p class="countdown">Your BAC drops about 0.015 an hour.
+At that rate you'd be back to 0.000 in about <strong>{{ to_zero }}</strong>.</p>
+{% elif last %}
+<p class="countdown">Your estimated BAC is back to 0.000.</p>
+{% endif %}
 
 {% if state == 'danger' %}
 <div class="note danger" role="alert">
@@ -144,6 +187,13 @@ METER = """
 <div class="note"><strong>This is only an estimate.</strong> Don't assume you're safe to drive.</div>
 {% endif %}
 
+{% if last %}
+<div class="rest">
+  <p>Taking a break? Log water or no drink and see how far your BAC has dropped.</p>
+  <form method="post" action="{{ url_for('rest') }}"><button>Log a break</button></form>
+</div>
+{% endif %}
+
 {% if skipped %}<p class="muted">Not added again (you had it before your last calculation): {{ skipped|join(', ') }}.</p>{% endif %}
 
 <h2>Add drinks</h2>
@@ -151,7 +201,7 @@ METER = """
   <div class="row">
     <div><label for="drink">Drink</label>
       <select id="drink" name="drink">{% for d, info in menu.items() %}
-        <option value="{{ d }}">{{ d|title }} ({{ info.ounces }} oz, {{ info.abv_percent }}%)</option>{% endfor %}
+        <option value="{{ d }}">{% if info.abv_percent == 0 %}Water / no drink{% else %}{{ d|title }} ({{ info.ounces }} oz, {{ info.abv_percent }}%){% endif %}</option>{% endfor %}
       </select></div>
     <div><label for="hours_ago">Hours ago</label>
       <input id="hours_ago" name="hours_ago" type="number" min="0" step="0.25" value="0"></div>
@@ -162,7 +212,7 @@ METER = """
 
 {% if round %}
 <ul class="round">{% for d in round %}
-  <li><span>{{ d.name|title }}, {{ d.hours_ago }} h ago</span>
+  <li><span>{{ 'Water / no drink' if d.name == water_name else d.name|title }}, {{ d.hours_ago }} h ago</span>
     <form method="post" action="{{ url_for('remove_from_round', i=loop.index0) }}"><button class="link">Remove</button></form></li>
 {% endfor %}</ul>
 <form method="post" action="{{ url_for('calculate_bac') }}"><button>Calculate BAC</button></form>

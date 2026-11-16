@@ -7,9 +7,10 @@ from datetime import date
 from flask import Flask, redirect, render_template_string, request, session, url_for
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # lets Python find the files next to this one
-from calculator import SYMPTOMS, bac_now, calculate, status  # noqa: E402
-from drink_menu import DRINK_MENU  # noqa: E402
+from calculator import (SYMPTOMS, bac_now, calculate, format_hours,  # noqa: E402
+                        hours_since_last, hours_until, status)
 from profiles import load_profiles, new_profile, save_profiles, valid_name  # noqa: E402
+from restaurants import RESTAURANTS, WATER_NAME, menu_for  # noqa: E402
 import templates  # noqa: E402
 
 app = Flask(__name__)
@@ -19,6 +20,7 @@ app.secret_key = os.environ.get('SECRET_KEY', 'dev-only-change-me')
 
 def render(body, **ctx):
     ctx.setdefault('error', request.args.get('error'))
+    ctx.setdefault('flash', session.pop('flash', None))
     return render_template_string(templates.LAYOUT.replace('__BODY__', body), **ctx)
 
 
@@ -30,19 +32,31 @@ def age_on(dob, today):
     return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
 
 
+def current_profile():
+    name = session.get('current')
+    profiles = load_profiles(session)
+    return name, profiles, profiles.get(name)
+
+
 @app.get('/')
 def home():
     if not session.get('verified'):
         return render(templates.VERIFY)
-    name = session.get('current')
-    profiles = load_profiles(session)
-    if not name or name not in profiles:
+
+    name, profiles, p = current_profile()
+    if p is None:
         return render(templates.PROFILE, names=[n.title() for n in profiles])
-    p = profiles[name]
+
+    place_id = session.get('place')
+    if place_id not in RESTAURANTS:
+        return render(templates.PLACES, places=RESTAURANTS)
+
     bac = bac_now(p)
     return render(templates.METER, name=name, bac=bac, state=status(bac),
                   level=min(bac / 0.30, 1.0), last=p['last_calculation'],
-                  menu=DRINK_MENU, round=session.get('round', []),
+                  to_zero=format_hours(hours_until(bac)),
+                  place=RESTAURANTS[place_id], menu=menu_for(place_id),
+                  water_name=WATER_NAME, round=session.get('round', []),
                   skipped=session.pop('skipped', []), symptoms=SYMPTOMS)
 
 
@@ -78,13 +92,32 @@ def profile():
         except ValueError:
             return back('home', 'New profiles need a body weight and sex.')
         save_profiles(session, profiles)
+    else:
+        session['flash'] = f'Welcome back, {name.title()}!'
     session['current'] = name
+    session['round'] = []
+    return back('home')
+
+
+@app.post('/place/<pid>')
+def choose_place(pid):
+    if pid not in RESTAURANTS:
+        return back('home', 'Pick a place from the list.')
+    session['place'] = pid
+    session['round'] = []
+    return back('home')
+
+
+@app.get('/place/change')
+def change_place():
+    session.pop('place', None)
     session['round'] = []
     return back('home')
 
 
 @app.post('/round/add')
 def add_to_round():
+    menu = menu_for(session.get('place'))
     drink = request.form.get('drink', '')
     try:
         hours_ago = float(request.form.get('hours_ago') or 0)
@@ -92,7 +125,7 @@ def add_to_round():
         return back('home', 'Enter hours ago as a number, like 1.25 for 1 hour 15 minutes.')
     if hours_ago < 0:
         return back('home', "Hours ago can't be negative.")
-    if drink not in DRINK_MENU:
+    if not menu or drink not in menu:
         return back('home', 'Pick a drink from the menu.')
     session['round'] = session.get('round', []) + [{'name': drink, 'hours_ago': hours_ago}]
     return back('home')
@@ -109,14 +142,35 @@ def remove_from_round(i):
 
 @app.post('/calculate')
 def calculate_bac():
-    name = session.get('current')
-    profiles = load_profiles(session)
-    if name not in profiles:
+    name, profiles, p = current_profile()
+    menu = menu_for(session.get('place'))
+    if p is None or menu is None:
         return back('home')
-    _, skipped = calculate(profiles[name], session.get('round', []), DRINK_MENU)
+    _, skipped = calculate(p, session.get('round', []), menu)
     save_profiles(session, profiles)
     session['round'] = []
     session['skipped'] = skipped
+    return back('home')
+
+
+@app.post('/rest')
+def rest():
+    """One-tap water / no drink: recalculates with nothing added."""
+    name, profiles, p = current_profile()
+    menu = menu_for(session.get('place'))
+    if p is None or menu is None:
+        return back('home')
+    before = p['prior_bac']
+    rested = hours_since_last(p)
+    bac, _ = calculate(p, [{'name': WATER_NAME, 'hours_ago': 0}], menu)
+    save_profiles(session, profiles)
+    dropped = max(0.0, before - bac)
+    if dropped >= 0.001:
+        session['flash'] = (f'Break logged. In the {format_hours(rested)} since your last update, '
+                            f'your BAC dropped {dropped:.3f}.')
+    else:
+        session['flash'] = ('Break logged. Your BAC keeps dropping about 0.015 an hour '
+                            'while you rest. Check back later.')
     return back('home')
 
 

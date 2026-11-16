@@ -56,6 +56,10 @@ def calculate(profile, drinks, menu, now=None):
         if item is None:
             skipped.append(d['name'])
             continue
+        if item['abv_percent'] == 0:
+            # Water / no drink: adds nothing, but the calculation still
+            # runs, so the time spent resting is subtracted
+            continue
         if d['hours_ago'] > time_since:
             # Consumed before the previous calculation, already counted
             skipped.append(d['name'])
@@ -67,6 +71,19 @@ def calculate(profile, drinks, menu, now=None):
     profile['prior_bac'] = current
     profile['last_calculation'] = now.isoformat()
     return current, skipped
+
+
+def hours_until(bac, target=0.0):
+    """Roughly how many hours until BAC falls to `target` at 0.015 per hour."""
+    return max(0.0, (bac - target) / ELIMINATION)
+
+
+def format_hours(hours):
+    total_min = int(round(hours * 60))
+    h, m = divmod(total_min, 60)
+    if h and m:
+        return f'{h} h {m} min'
+    return f'{h} h' if h else f'{m} min'
 
 
 def status(bac):
