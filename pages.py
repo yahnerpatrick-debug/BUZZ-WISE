@@ -1,5 +1,3 @@
-from bee import BEE_CSS, bee_svg
-
 LAYOUT = """<!doctype html>
 <html lang="en">
 <head>
@@ -143,16 +141,22 @@ button.text-button {
   border-bottom: 1px solid var(--line);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .meter-fill { transition: none; }
+/* the bee slowly floats up and down */
+.small-bee, .big-bee { animation: hover 2.6s ease-in-out infinite; }
+@keyframes hover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
-""" + BEE_CSS + """
+
+@media (prefers-reduced-motion: reduce) {
+  .meter-fill, .small-bee, .big-bee { transition: none; animation: none; }
+}
 </style>
 </head>
 <body>
 <header>
   <div class="top-bar">
-    """ + bee_svg('small-bee') + """
+    <img class="small-bee" src="/bee.png" alt="BUZZ-WISE bee">
     <div class="logo">BUZZ<span>-WISE</span></div>
     {% if session.get('name') %}<a href="{{ url_for('switch_person') }}">Switch person</a>{% endif %}
   </div>
@@ -171,7 +175,7 @@ button.text-button {
 
 
 VERIFY = """
-<div class="big-bee-box">""" + bee_svg('big-bee') + """</div>
+<div class="big-bee-box"><img class="big-bee" src="/bee.png" alt=""></div>
 <h1>Check your age</h1>
 <p class="gray">Upload a photo of your ID and enter your birthday. You need to be 21 or older.
 Your photo isn't saved.</p>

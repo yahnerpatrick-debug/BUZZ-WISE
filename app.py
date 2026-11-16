@@ -2,7 +2,7 @@ import os
 import sys
 from datetime import date
 
-from flask import Flask, redirect, render_template_string, request, session, url_for
+from flask import Flask, redirect, render_template_string, request, send_from_directory, session, url_for
 
 # lets Python find the other files in this folder
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -174,4 +174,7 @@ def switch_person():
 
 
 if __name__ == '__main__':
+    # Vercel serves the public folder on its own, this is just for running it on your computer
+    app.add_url_rule('/<path:filename>', 'public_files',
+                     lambda filename: send_from_directory('public', filename))
     app.run(debug=True)
