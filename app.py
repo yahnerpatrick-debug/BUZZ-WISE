@@ -2,10 +2,11 @@ import os
 import sys
 from datetime import date
 
-from flask import Flask, redirect, render_template_string, request, send_from_directory, session, url_for
+from flask import Flask, redirect, render_template_string, request, send_file, session, url_for
 
 # lets Python find the other files in this folder
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(HERE)
 
 import pages
 from calculator import SYMPTOMS, calculate, format_hours, get_current_bac, get_status, hours_until_zero
@@ -33,6 +34,11 @@ def get_age(birthday):
     today = date.today()
     had_birthday = (today.month, today.day) >= (birthday.month, birthday.day)
     return today.year - birthday.year - (0 if had_birthday else 1)
+
+
+@app.get('/bee.png')
+def bee_image():
+    return send_file(os.path.join(HERE, 'bee.png'), mimetype='image/png', max_age=86400)
 
 
 @app.get('/')
@@ -174,7 +180,4 @@ def switch_person():
 
 
 if __name__ == '__main__':
-    # Vercel serves the public folder on its own, this is just for running it on your computer
-    app.add_url_rule('/<path:filename>', 'public_files',
-                     lambda filename: send_from_directory('public', filename))
     app.run(debug=True)

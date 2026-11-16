@@ -156,7 +156,7 @@ button.text-button {
 <body>
 <header>
   <div class="top-bar">
-    <img class="small-bee" src="/bee.png" alt="BUZZ-WISE bee">
+    <img class="small-bee" src="{{ url_for('bee_image') }}" alt="">
     <div class="logo">BUZZ<span>-WISE</span></div>
     {% if session.get('name') %}<a href="{{ url_for('switch_person') }}">Switch person</a>{% endif %}
   </div>
@@ -175,7 +175,7 @@ button.text-button {
 
 
 VERIFY = """
-<div class="big-bee-box"><img class="big-bee" src="/bee.png" alt=""></div>
+<div class="big-bee-box"><img class="big-bee" src="{{ url_for('bee_image') }}" alt=""></div>
 <h1>Check your age</h1>
 <p class="gray">Upload a photo of your ID and enter your birthday. You need to be 21 or older.
 Your photo isn't saved.</p>
