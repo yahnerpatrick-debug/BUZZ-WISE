@@ -51,15 +51,22 @@ def calculate(profile, drinks, menu, now=None):
     current = bac_now(profile, now)
     skipped = []
 
+    # Water / no drink: its "hours" are hours spent resting. Each hour of
+    # rest lowers BAC by 0.015. Time already passed since the last
+    # calculation was subtracted above, so only the extra hours count.
+    rest_hours = max([d['hours_ago'] for d in drinks
+                      if menu.get(d['name'], {}).get('abv_percent') == 0] or [0])
+    if rest_hours and time_since != float('inf'):
+        extra = max(0.0, rest_hours - time_since)
+        current = max(0.0, current - ELIMINATION * extra)
+
     for d in drinks:
         item = menu.get(d['name'])
         if item is None:
             skipped.append(d['name'])
             continue
         if item['abv_percent'] == 0:
-            # Water / no drink: adds nothing, but the calculation still
-            # runs, so the time spent resting is subtracted
-            continue
+            continue  # handled above
         if d['hours_ago'] > time_since:
             # Consumed before the previous calculation, already counted
             skipped.append(d['name'])

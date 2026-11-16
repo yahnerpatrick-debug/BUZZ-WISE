@@ -7,8 +7,7 @@ from datetime import date
 from flask import Flask, redirect, render_template_string, request, session, url_for
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # lets Python find the files next to this one
-from calculator import (SYMPTOMS, bac_now, calculate, format_hours,  # noqa: E402
-                        hours_since_last, hours_until, status)
+from calculator import SYMPTOMS, bac_now, calculate, format_hours, hours_until, status  # noqa: E402
 from profiles import load_profiles, new_profile, save_profiles, valid_name  # noqa: E402
 from restaurants import RESTAURANTS, WATER_NAME, menu_for  # noqa: E402
 import templates  # noqa: E402
@@ -150,27 +149,6 @@ def calculate_bac():
     save_profiles(session, profiles)
     session['round'] = []
     session['skipped'] = skipped
-    return back('home')
-
-
-@app.post('/rest')
-def rest():
-    """One-tap water / no drink: recalculates with nothing added."""
-    name, profiles, p = current_profile()
-    menu = menu_for(session.get('place'))
-    if p is None or menu is None:
-        return back('home')
-    before = p['prior_bac']
-    rested = hours_since_last(p)
-    bac, _ = calculate(p, [{'name': WATER_NAME, 'hours_ago': 0}], menu)
-    save_profiles(session, profiles)
-    dropped = max(0.0, before - bac)
-    if dropped >= 0.001:
-        session['flash'] = (f'Break logged. In the {format_hours(rested)} since your last update, '
-                            f'your BAC dropped {dropped:.3f}.')
-    else:
-        session['flash'] = ('Break logged. Your BAC keeps dropping about 0.015 an hour '
-                            'while you rest. Check back later.')
     return back('home')
 
 

@@ -75,10 +75,6 @@ button.link{border:0;background:none;color:var(--ink-soft);padding:0;margin:0;te
 .note ul{margin:.4rem 0 .6rem;padding-left:1.2rem}
 .call{color:var(--red);font-weight:700}
 
-.rest{display:flex;gap:1rem;align-items:center;background:var(--white);border-radius:.6rem;
-  padding:1rem 1.1rem;margin-top:1rem;border:2px dashed var(--sky)}
-.rest p{margin:0;font-size:.95rem}
-.rest button{margin:0;flex:none;white-space:nowrap;background:var(--sky);border-color:var(--sky);color:var(--ink)}
 
 .round{list-style:none;padding:0;margin:0}
 .round li{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--line)}
@@ -187,13 +183,6 @@ At that rate you'd be back to 0.000 in about <strong>{{ to_zero }}</strong>.</p>
 <div class="note"><strong>This is only an estimate.</strong> Don't assume you're safe to drive.</div>
 {% endif %}
 
-{% if last %}
-<div class="rest">
-  <p>Taking a break? Log water or no drink and see how far your BAC has dropped.</p>
-  <form method="post" action="{{ url_for('rest') }}"><button>Log a break</button></form>
-</div>
-{% endif %}
-
 {% if skipped %}<p class="muted">Not added again (you had it before your last calculation): {{ skipped|join(', ') }}.</p>{% endif %}
 
 <h2>Add drinks</h2>
@@ -203,16 +192,17 @@ At that rate you'd be back to 0.000 in about <strong>{{ to_zero }}</strong>.</p>
       <select id="drink" name="drink">{% for d, info in menu.items() %}
         <option value="{{ d }}">{% if info.abv_percent == 0 %}Water / no drink{% else %}{{ d|title }} ({{ info.ounces }} oz, {{ info.abv_percent }}%){% endif %}</option>{% endfor %}
       </select></div>
-    <div><label for="hours_ago">Hours ago</label>
+    <div><label for="hours_ago">Hours</label>
       <input id="hours_ago" name="hours_ago" type="number" min="0" step="0.25" value="0"></div>
   </div>
-  <p class="muted">1.25 means 1 hour 15 minutes ago. 0 means just now.</p>
+  <p class="muted">For a drink, how long ago you had it (0 means just now).
+For water / no drink, how long you've been resting. 1.25 means 1 hour 15 minutes.</p>
   <button class="quiet">Add to list</button>
 </form>
 
 {% if round %}
 <ul class="round">{% for d in round %}
-  <li><span>{{ 'Water / no drink' if d.name == water_name else d.name|title }}, {{ d.hours_ago }} h ago</span>
+  <li><span>{% if d.name == water_name %}Water / no drink, resting {{ d.hours_ago }} h{% else %}{{ d.name|title }}, {{ d.hours_ago }} h ago{% endif %}</span>
     <form method="post" action="{{ url_for('remove_from_round', i=loop.index0) }}"><button class="link">Remove</button></form></li>
 {% endfor %}</ul>
 <form method="post" action="{{ url_for('calculate_bac') }}"><button>Calculate BAC</button></form>
