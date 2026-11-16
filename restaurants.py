@@ -1,16 +1,7 @@
-"""
-Places and their drink menus. These are placeholder names; swap in real
-restaurants and bars. Each drink is {'ounces': ..., 'abv_percent': ...},
-the same format as drink_menu.py.
-
-Water is added to every menu automatically, so don't list it here.
-"""
-
 from drink_menu import DRINK_MENU
 
-WATER = {'ounces': 8, 'abv_percent': 0}
-WATER_NAME = 'water / no drink'
-
+# placeholder places, change these to the real ones
+# cocktails use the size and strength of the whole mixed drink
 RESTAURANTS = {
     'honeycomb-taproom': {
         'name': 'The Honeycomb Taproom',
@@ -26,7 +17,6 @@ RESTAURANTS = {
     'blue-hive-lounge': {
         'name': 'Blue Hive Lounge',
         'kind': 'Cocktail bar',
-        # 'ounces' is the whole drink; abv_percent is for the mixed drink
         'menu': {
             'margarita': {'ounces': 4, 'abv_percent': 20},
             'old fashioned': {'ounces': 3, 'abv_percent': 32},
@@ -38,7 +28,6 @@ RESTAURANTS = {
     'stingers-sports-grill': {
         'name': "Stinger's Sports Grill",
         'kind': 'Sports bar and grill',
-        # Your original drink menu
         'menu': DRINK_MENU,
     },
     'meadow-wine-kitchen': {
@@ -54,10 +43,12 @@ RESTAURANTS = {
     },
 }
 
+WATER = 'water / no drink'
 
-def menu_for(restaurant_id):
-    """The place's drinks with water listed last."""
-    place = RESTAURANTS.get(restaurant_id)
-    if place is None:
+
+def get_menu(place_id):
+    if place_id not in RESTAURANTS:
         return None
-    return {**place['menu'], WATER_NAME: WATER}
+    menu = dict(RESTAURANTS[place_id]['menu'])
+    menu[WATER] = {'ounces': 8, 'abv_percent': 0}
+    return menu

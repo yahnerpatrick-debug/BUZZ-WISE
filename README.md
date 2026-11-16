@@ -1,15 +1,8 @@
-# BUZZ-CHECK
+# BUZZ-WISE
 
-Personal blood alcohol (BAC) estimator. Uses Python and Flask.
+Personal BAC estimator built with Python and Flask, hosted on Vercel.
 
-## Files
-- `app.py`: the website 
-- `calculator.py`: BAC math
-- `restaurants.py`: the places and each one's drink menu.
-- `drink_menu.py`: drink list
-- `bee.py`: the bee logo
-- `profiles.py`: creating and saving profiles
-- `templates.py`: page layout and colors
-- `requirements.txt`: Installs Flask
+To deploy, upload these files to the top level of a GitHub repo, import the repo
+into Vercel, and add a `SECRET_KEY` environment variable.
 
-Under Environment Variables in Vercel which has a `SECRET_KEY` used to save the data.
+BUZZ-WISE gives an estimate, not a measurement. Never use it to decide whether you can drive.

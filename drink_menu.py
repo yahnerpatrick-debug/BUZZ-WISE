@@ -1,5 +1,3 @@
-# Notebook 2: the drink menu. Add or remove drinks freely.
-
 DRINK_MENU = {
     'whiskey': {'ounces': 1.5, 'abv_percent': 50},
     'vodka': {'ounces': 1.5, 'abv_percent': 40},
