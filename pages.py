@@ -141,13 +141,6 @@ button.text-button {
   border-bottom: 1px solid var(--line);
 }
 
-/* the bee slowly floats up and down */
-.small-bee, .big-bee { animation: hover 2.6s ease-in-out infinite; }
-@keyframes hover {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .meter-fill, .small-bee, .big-bee { transition: none; animation: none; }
 }
