@@ -1,4 +1,4 @@
-"""The BUZZ-WISE bee, drawn in code (no image files needed)."""
+"""The BUZZ-CHECK bee."""
 
 
 def bee_svg(uid, css_class='bee'):
@@ -39,13 +39,4 @@ def bee_svg(uid, css_class='bee'):
 </svg>"""
 
 
-BEE_CSS = """
-.bee .bee-fly{animation:bob 2.6s ease-in-out infinite;transform-box:view-box;transform-origin:32px 38px}
-.bee .wing{transform-box:view-box;animation:flap .14s ease-in-out infinite alternate}
-.bee .wing-l{transform-origin:27px 27px}
-.bee .wing-r{transform-origin:37px 27px;animation-name:flap-r}
-@keyframes flap{from{transform:rotate(0)}to{transform:rotate(14deg)}}
-@keyframes flap-r{from{transform:rotate(0)}to{transform:rotate(-14deg)}}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-@media (prefers-reduced-motion:reduce){.bee .bee-fly,.bee .wing{animation:none}}
-"""
+
