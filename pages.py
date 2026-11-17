@@ -160,7 +160,7 @@ button.text-button {
 {{ page }}
 </main>
 <footer>
-  BUZZ-WISE gives an estimate, not a measurement. Food, medication and metabolism all change your real BAC.
+  BUZZ-CHECK gives an estimate, not a measurement. Food, medication and metabolism all change your real BAC.
   Never use this number to decide whether you can drive.
 </footer>
 </body>
