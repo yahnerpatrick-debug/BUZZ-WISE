@@ -3,7 +3,7 @@ LAYOUT = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BUZZ-CHECK</title>
+<title>BUZZ-WISE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
@@ -150,7 +150,7 @@ button.text-button {
 <header>
   <div class="top-bar">
     <img class="small-bee" src="{{ url_for('bee_image') }}" alt="">
-    <div class="logo">BUZZ<span>-CHECK</span></div>
+    <div class="logo">BUZZ<span>-WISE</span></div>
     {% if session.get('name') %}<a href="{{ url_for('switch_person') }}">Switch person</a>{% endif %}
   </div>
 </header>
@@ -160,7 +160,7 @@ button.text-button {
 {{ page }}
 </main>
 <footer>
-  BUZZ-CHECK gives an estimate, not a measurement. Food, medication and metabolism all change your real BAC.
+  BUZZ-WISE gives an estimate, not a measurement. Food, medication and metabolism all change your real BAC.
   Never use this number to decide whether you can drive.
 </footer>
 </body>
