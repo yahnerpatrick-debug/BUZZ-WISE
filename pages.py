@@ -150,7 +150,7 @@ button.text-button {
 <header>
   <div class="top-bar">
     <img class="small-bee" src="{{ url_for('bee_image') }}" alt="">
-    <div class="logo">BUZZ<span>-WISE</span></div>
+    <div class="logo">BUZZ<span>-CHECK</span></div>
     {% if session.get('name') %}<a href="{{ url_for('switch_person') }}">Switch person</a>{% endif %}
   </div>
 </header>
