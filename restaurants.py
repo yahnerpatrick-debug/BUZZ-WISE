@@ -1,7 +1,4 @@
-from drink_menu import DRINK_MENU
 
-# placeholder places, change these to the real ones
-# cocktails use the size and strength of the whole mixed drink
 RESTAURANTS = {
     'honeycomb-taproom': {
         'name': 'The Honeycomb Taproom',
