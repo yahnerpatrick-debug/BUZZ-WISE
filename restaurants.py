@@ -35,6 +35,7 @@ RESTAURANTS = {
             'beer': {'ounces': 12, 'abv_percent': 5},
             'brandy': {'ounces': 1.5, 'abv_percent': 35},
             'malibu': {'ounces': 1.5, 'abv_percent': 21},
+        },
     },
     'meadow-wine-kitchen': {
         'name': 'Meadow Wine Kitchen',
