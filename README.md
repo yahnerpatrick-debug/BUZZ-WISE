@@ -6,10 +6,6 @@ BUZZ-WISE is a personal blood alcohol (BAC) estimator for people 21 and older. Y
 
 **[BUZZ-WISE Website](https://buzz-wise-f6yq8cuvu-billee1.vercel.app/)**
 
-> **Important:** BUZZ-WISE gives an *estimate*, not a measurement. Food, medication, metabolism and many other things change your real BAC. Never use this number to decide whether you can drive.
-
----
-
 ## Table of contents
 
 1. [What the app does](#what-the-app-does)
@@ -33,15 +29,13 @@ BUZZ-WISE is a personal blood alcohol (BAC) estimator for people 21 and older. Y
 
 The site walks the user through four screens, in this order:
 
-1. **Age check.** The user uploads a photo of their ID and enters their birthday. If they're under 21, they can't continue. (The photo is not saved anywhere.)
+1. **Age check.** The user uploads a photo of their ID and enters their birthday. If they're under 21, they can't continue.
 2. **Profile.** The user enters their name, body weight and sex. These are needed for the BAC formula. Returning users only need their name.
 3. **Pick a place.** The user chooses the restaurant or bar they're at. Each place has its own drink menu.
 4. **Tracker.** The user adds drinks (and how many hours ago they had each one), then presses **Calculate BAC**. The site shows:
    - the estimated BAC inside a honeycomb hexagon that fills up as BAC rises (blue under 0.08, yellow at 0.08+, red at 0.30+)
    - about how long until the BAC is back to 0.000
    - a warning: "only an estimate" under 0.08, "do not drive" at 0.08+, and "get medical help" with overdose symptoms at 0.30+
-
-There's also a **Water / no drink** option. Its hours count as time spent resting, which lowers the BAC by 0.015 per hour.
 
 ---
 
@@ -53,18 +47,15 @@ There's also a **Water / no drink** option. Its hours count as time spent restin
 | `calculator.py` | All the BAC math: the Widmark formula, how BAC goes down over time, and the warning levels. |
 | `profiles.py` | Creates and saves user profiles (weight, sex, last BAC). |
 | `restaurants.py` | The list of places and each place's drink menu. |
-| `drink_menu.py` | The original drink menu (whiskey, vodka, rum, beer, brandy, malibu). |
 | `pages.py` | What every page looks like: the HTML layout, the CSS styling and the four screens. |
 | `bee.png` | The BUZZ-WISE bee logo. |
-| `requirements.txt` | Tells Vercel which outside libraries to install (just Flask). |
+| `requirements.txt` | Tells Vercel which outside libraries to install. |
 | `.gitignore` | Tells GitHub which junk files to ignore. |
 | `README.md` | This file. |
 
-All the files are in the top level of the repo, with no folders. Vercel needs `app.py` at the top level to find the app.
-
 ---
 
-## How a page loads (the big picture)
+## How a page loads
 
 Websites work through **requests** and **responses**:
 
@@ -92,8 +83,6 @@ Every button on the site follows this same pattern. A form sends data with **POS
 
 ---
 
-## What Flask is
-
 **Flask** is a Python library for building websites. On its own, Python doesn't know how to talk to web browsers. Flask handles that part. It:
 
 - listens for requests from browsers
@@ -117,14 +106,9 @@ Vercel starts from a fresh computer that only has plain Python. `requirements.tx
 
 **What `flask==3.1.*` means:**
 - `flask` is the library's name.
-- `==` means "exactly this version".
-- `3.1.*` means "version 3.1, any patch number" (3.1.0, 3.1.1, 3.1.3 and so on). The `*` is a wildcard.
+- `3.1.*` means "version 3.1, any patch number" (3.1.0, 3.1.1, 3.1.3 and so on).
 
 **Why pin the version?** Libraries change over time. If Flask 4.0 comes out and changes how something works, an un-pinned site could break the next time Vercel rebuilds it. Pinning to 3.1 keeps it stable. Patch versions (the last number) only contain bug fixes, so allowing any of them is safe.
-
-**Can I edit or delete it?**
-- **Edit:** yes. If you ever add another outside library (for example `requests`), add it on a new line.
-- **Delete:** no. Without it, Vercel won't install Flask and the site will crash.
 
 ---
 
@@ -132,27 +116,13 @@ Vercel starts from a fresh computer that only has plain Python. `requirements.tx
 
 `app.py` is the **main Flask file**. It creates the website, connects all the other files, and has one function for every URL on the site. Vercel looks for a file named `app.py` with a variable named `app` inside it, so both of those names matter.
 
-### The imports
 
-The imports are at the very top of the file. An **import** brings in code from somewhere else so this file can use it. There are two styles:
+#### 1: built into Python 
 
-- `import os` brings in the whole module. You then use it as `os.something`.
-- `from datetime import date` brings in just one piece, so you can write `date` instead of `datetime.date`.
-
-The imports are grouped in three blocks, in the order Python's official style guide (PEP 8) recommends: **built-in Python modules first, outside libraries second, our own files last.**
-
-#### Block 1: built into Python (no install needed)
-
-```python
-import os
-import sys
-from datetime import date
-```
-
-| Import | What it is | How we use it |
+| Import | What it is | How we use it 
 |---|---|---|
 | `os` | "Operating system". It lets Python work with files, folders and settings on the computer it's running on. | `os.path` builds the file path to `bee.png`. `os.environ` reads the `SECRET_KEY` setting from Vercel. |
-| `sys` | "System". It controls how Python itself runs. | `sys.path` is the list of folders Python searches when you `import` something. We add our project folder to it. |
+| `sys` | "System". It controls how Python itself runs. | `sys.path` is the list of folders Python searches when you `import` something. |
 | `date` (from `datetime`) | A tool for working with calendar dates. | The 21+ age check: getting today's date and reading the birthday the user typed. |
 
 #### Block 2: the Flask library (installed from requirements.txt)
@@ -163,14 +133,14 @@ from flask import Flask, redirect, render_template_string, request, send_file, s
 
 These seven names are all pieces of Flask:
 
-| Import | What it is | How we use it |
+| Import | What it is | How it is used |
 |---|---|---|
-| `Flask` | The class that creates the website itself. | `app = Flask(__name__)` creates our app. |
+| `Flask` | Creates the website | `app = Flask(__name__)` creates our app. |
 | `request` | Everything about the request that just came in. | `request.form` holds form fields the user typed (name, weight, hours). `request.files` holds uploaded files (the ID photo). `request.args` holds values in the URL, which is where error messages go. |
-| `session` | A dictionary that **remembers things about one user** from page to page. It's stored in their browser as a cookie. | Stores whether they passed the age check, their profiles, which place they picked, and their list of drinks. |
-| `redirect` | A response that tells the browser "go to this other page". | After every form, we redirect back to the home page. |
+| `session` | A dictionary that remembers the users data from page to page. It's stored in their browser as a cookie. | Stores whether they passed the age check, their profiles, which place they picked, and their list of drinks. |
+| `redirect` | A response that tells the browser "go to another page".
 | `url_for` | Builds the URL for one of our functions, using the function's name. | `url_for('home')` gives `/`. If we ever change a URL, every link still works, because links point at function names instead of typed-out addresses. |
-| `render_template_string` | Takes HTML text containing Jinja blanks (`{{ }}` and `{% %}`), fills them in, and returns the finished page. | Builds every page from the text in `pages.py`. It also **auto-escapes** what users type, so if someone puts HTML code in their name, it shows as plain text instead of running. |
+| `render_template_string` | Takes HTML text containing Jinja blanks (`{{ }}` and `{% %}`), fills them in, and returns the finished page. | Builds every page from the text in `pages.py`
 | `send_file` | Sends a file instead of a web page. | Sends `bee.png` when the browser asks for the logo. |
 
 #### Block 3: our own files
@@ -197,20 +167,16 @@ sys.path.append(HERE)
 - So `HERE` is "the folder `app.py` lives in".
 - `sys.path.append(HERE)` adds that folder to the places Python searches for imports. This guarantees `import pages`, `from calculator import ...` and the others always work, whichever folder Vercel starts the program from.
 
-These two lines come **before** our own imports on purpose, because those imports need the folder to be searchable first.
-
 ```python
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-key')
 ```
 
 - `Flask(__name__)` creates the website. `__name__` is another automatic variable holding the current module's name. Flask uses it to know where the app lives.
-- `app.secret_key` is used to **sign** the session cookie. Users can't change their own cookie (for example, to skip the age check or lower their BAC), because any change breaks the signature and Flask throws the cookie away.
-- `os.environ.get('SECRET_KEY', 'dev-key')` means "read the setting called `SECRET_KEY` from Vercel, and if it doesn't exist, use `'dev-key'`". The real key is stored in Vercel's settings, **not** in the code, because the code is on GitHub where anyone could read it.
+- `app.secret_key` is used to sign the session cookie. Users can't change their own cookie (for example, to skip the age check or lower their BAC), because any change breaks the signature and Flask throws the cookie away.
+- `os.environ.get('SECRET_KEY', 'dev-key')` means "read the setting called `SECRET_KEY` from Vercel, and if it doesn't exist, use `'dev-key'`". The real key is stored in Vercel's settings, not in the code, because the code is on GitHub where anyone could read it.
 
 ### Helper functions
-
-These are small functions the routes use over and over.
 
 ```python
 def show(page, **info):
@@ -221,7 +187,7 @@ def show(page, **info):
 ```
 
 `show()` builds a full page.
-- `**info` collects any number of **keyword arguments** into a dictionary. So `show(pages.TRACKER, name=name, bac=bac)` gives `info = {'name': ..., 'bac': ...}`.
+- `**info` collects any number of keyword arguments into a dictionary. So `show(pages.TRACKER, name=name, bac=bac)` gives `info = {'name': ..., 'bac': ...}`.
 - It adds any error message from the URL, and any one-time message from the session. `.pop()` reads a value and deletes it in the same step, so "Welcome back!" only shows once.
 - `pages.LAYOUT.replace('{{ page }}', page)` slots one screen (like the tracker) into the shared layout (header, footer, styling).
 - `render_template_string(html, **info)` fills in all the blanks. The `**` here does the reverse: it spreads the dictionary back out into keyword arguments.
@@ -491,8 +457,6 @@ The CSS is organized from general to specific:
 10. **Drink list**: each drink in a row with a Remove link.
 11. **Reduced motion**: `@media (prefers-reduced-motion: reduce)` turns off the meter animation for anyone whose device is set to reduce motion.
 
-Fonts come from **Google Fonts** through the `<link>` tags in `<head>`: *Bricolage Grotesque* for headings and *Figtree* for body text.
-
 **3. Jinja (filling in the blanks): what *changes*.**
 Jinja is the template language that comes with Flask. `render_template_string` reads it and replaces it with real values before the page is sent.
 
@@ -524,14 +488,10 @@ The meter is drawn with SVG:
 
 ### Sources the page code is based on
 
-The structure and styling in `pages.py` follow techniques from two references (full citations in [References](#references)):
-
 - **MDN Web Docs: CSS styling basics.** The styling approach comes from here: CSS selectors and classes, color and font properties, spacing with margin and padding, the box model, laying out the drink form with `display: grid`, `transition` for the meter animation, and the `prefers-reduced-motion` media query.
 - **Flask Documentation: Quickstart.** The page and route setup is modeled on the patterns here: creating the app with `Flask(__name__)`, the `@app.get` and `@app.post` route decorators, reading form data with `request`, storing data with `session` and a `secret_key`, `redirect` with `url_for`, and rendering HTML with Jinja templates.
 
 ---
-
-## bee.png and .gitignore
 
 ### bee.png
 
@@ -547,8 +507,6 @@ def bee_image():
 - `mimetype='image/png'` tells the browser it's a PNG image.
 - `max_age=86400` lets the browser keep the image for 86,400 seconds (one day), so it doesn't download it again on every page.
 
-To change the logo, replace `bee.png` with a new image with the same name.
-
 ### .gitignore
 
 Lists files GitHub should ignore:
@@ -559,19 +517,6 @@ Lists files GitHub should ignore:
 
 ---
 
-## Coding style and format
-
-The code follows Python's official style guide, **PEP 8**, plus some common Flask habits.
-
-### Naming conventions
-
-| Style | Used for | Examples |
-|---|---|---|
-| `snake_case` (lowercase with underscores) | Variables and functions | `current_bac`, `get_drink_bac()`, `time_since` |
-| `UPPER_CASE` | Constants that never change | `BURN_RATE`, `DRINK_MENU`, `RESTAURANTS`, `HERE` |
-| `PascalCase` (capital first letters) | Classes | `Flask` (from the Flask library) |
-
-Function names start with a **verb** that says what they do: `get_...`, `load_...`, `save_...`, `calculate...`. Variable names describe what they hold: `pure_alc`, `abv_decimal` and `time_since` all come from the original notebook code.
 
 ### Layout and formatting
 
@@ -606,24 +551,3 @@ Function names start with a **verb** that says what they do: `get_...`, `load_..
 2. **Vercel:** go to **Add New → Project** and import the GitHub repo. Vercel detects Flask automatically, so leave the build settings as they are.
 3. **Secret key:** in the project's **Settings → Environment Variables**, add `SECRET_KEY` with a long random value. Never put the real key in the code.
 4. **Deploy.** After that, every change committed to GitHub redeploys the site automatically.
-
-To run it on your own computer:
-
-```
-pip install -r requirements.txt
-python app.py
-```
-
-Then open `http://127.0.0.1:5000`.
-
----
-
-## References
-
-MDN contributors. (n.d.). *CSS styling basics*. MDN Web Docs. Retrieved November 16, 2026, from https://developer.mozilla.org/learn/css
-
-Pallets. (n.d.). *Quickstart*. Flask Documentation (Version 3.1.x). Retrieved November 16, 2026, from https://flask.palletsprojects.com/quickstart/
-
-### Acknowledgments
-
-Built with help from Claude, an AI assistant made by Anthropic, for writing, debugging and explaining the code.
