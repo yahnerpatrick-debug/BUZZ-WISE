@@ -1,5 +1,4 @@
-# Profiles are saved in the browser's session cookie, since Vercel
-# can't save files like the notebook version did.
+
 
 R_VALUES = {'male': 0.68, 'female': 0.55}
 
