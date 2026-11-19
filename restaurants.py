@@ -1,14 +1,13 @@
 
 RESTAURANTS = {
-    'honeycomb-taproom': {
-        'name': 'The Honeycomb Taproom',
-        'kind': 'Brewery and taproom',
+        'half-moon-bay-brewing-company': {
+        'name': 'Half Moon Bay Brewing Company',
+        'kind': 'Brewery and waterfront restaurant',
         'menu': {
-            'house lager': {'ounces': 16, 'abv_percent': 4.8},
-            'hazy ipa': {'ounces': 16, 'abv_percent': 6.8},
-            'double ipa': {'ounces': 12, 'abv_percent': 8.5},
-            'hard seltzer': {'ounces': 12, 'abv_percent': 5},
-            'cider': {'ounces': 12, 'abv_percent': 6},
+            'kolsch': {'ounces': 16, 'abv_percent': 5.1},
+            'saison': {'ounces': 16, 'abv_percent': 6.7},
+            'mavericks amber ale': {'ounces': 16, 'abv_percent': 5.8},
+            'half moon bay ipa': {'ounces': 16, 'abv_percent': 6.5},
         },
     },
     'blue-hive-lounge': {
