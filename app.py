@@ -76,7 +76,7 @@ def verify():
     if not photo or not photo.filename:
         return go_home('Upload a photo of your ID to continue.')
 
-    # the photo isn't saved. reading the birthday off the ID would need an OCR service
+
     try:
         birthday = date.fromisoformat(request.form.get('birthday', ''))
     except ValueError:
