@@ -4,7 +4,7 @@ BUZZ-WISE is a personal blood alcohol (BAC) estimator for people 21 and older. Y
 
 ## Live website
 
-**👉 [BUZZ-WISE Website](https://buzz-wise-f6yq8cuvu-billee1.vercel.app/)**
+**[BUZZ-WISE Website](https://buzz-wise-f6yq8cuvu-billee1.vercel.app/)**
 
 > **Important:** BUZZ-WISE gives an *estimate*, not a measurement. Food, medication, metabolism and many other things change your real BAC. Never use this number to decide whether you can drive.
 
