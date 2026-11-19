@@ -4,7 +4,6 @@ from datetime import date
 
 from flask import Flask, redirect, render_template_string, request, send_file, session, url_for
 
-# lets Python find the other files in this folder
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(HERE)
 
