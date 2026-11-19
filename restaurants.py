@@ -10,15 +10,19 @@ RESTAURANTS = {
             'half moon bay ipa': {'ounces': 16, 'abv_percent': 6.5},
         },
     },
-    'blue-hive-lounge': {
-        'name': 'Blue Hive Lounge',
-        'kind': 'Cocktail bar',
+        'cali-brews-mexican-grill': {
+        'name': 'Cali Brews Mexican Grill',
+        'kind': 'Mexican restaurant and bar',
         'menu': {
-            'margarita': {'ounces': 4, 'abv_percent': 20},
-            'old fashioned': {'ounces': 3, 'abv_percent': 32},
-            'mojito': {'ounces': 6, 'abv_percent': 13},
-            'espresso martini': {'ounces': 4, 'abv_percent': 22},
-            'long island iced tea': {'ounces': 8, 'abv_percent': 22},
+             'michelob ultra': {'ounces': 16, 'abv_percent': 4.4},
+                'bud light': {'ounces': 16, 'abv_percent': 4.4},
+                'modelo especial': {'ounces': 16, 'abv_percent': 5.4},
+                'corona extra': {'ounces': 16, 'abv_percent': 4.6},
+                'pacifico clara': {'ounces': 16, 'abv_percent': 4.4},
+                '805 blonde ale': {'ounces': 16, 'abv_percent': 4.7},
+                'lagunitas ipa': {'ounces': 16, 'abv_percent': 6.2},
+                'truly': {'ounces': 16, 'abv_percent': 5.0},
+                'guinness': {'ounces': 16, 'abv_percent': 4.2},
         },
     },
     'stingers-sports-grill': {
